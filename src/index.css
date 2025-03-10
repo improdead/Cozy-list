@@ -1,0 +1,206 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 30% 96%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 265 89% 78%;
+    --primary-foreground: 355.7 100% 97.3%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142.1 76.2% 36.3%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 265 89% 78%;
+    --primary-foreground: 355.7 100% 97.3%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142.4 71.8% 29.2%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter;
+    @apply antialiased min-h-screen;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-patrick tracking-wide;
+  }
+}
+
+@layer components {
+  .task-card {
+    @apply bg-white/70 backdrop-blur-sm rounded-xl p-5 shadow-sm border border-white/50 transition-all duration-300 hover:shadow-md;
+    @apply animate-fade-in;
+  }
+  
+  .task-card-completed {
+    @apply opacity-50;
+  }
+  
+  .task-text-completed {
+    @apply line-through text-muted-foreground;
+  }
+  
+  .tag {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+  
+  .tag-work {
+    @apply bg-blue-100 text-blue-800 hover:bg-blue-200;
+  }
+  
+  .tag-personal {
+    @apply bg-purple-100 text-purple-800 hover:bg-purple-200;
+  }
+  
+  .tag-urgent {
+    @apply bg-red-100 text-red-800 hover:bg-red-200;
+  }
+  
+  .task-input {
+    @apply w-full p-2 rounded-md border border-input bg-background shadow-sm;
+    @apply transition-colors focus-visible:outline-none focus-visible:ring-1;
+    @apply focus-visible:ring-ring;
+  }
+  
+  .checkbox-container {
+    @apply relative flex items-center;
+  }
+  
+  .checkbox-custom {
+    @apply h-5 w-5 rounded border-2 border-muted-foreground/50;
+    @apply flex items-center justify-center transition-all duration-200;
+    @apply text-primary-foreground;
+  }
+  
+  .checkbox-custom.checked {
+    @apply border-transparent bg-green-500;
+  }
+  
+  .checkmark {
+    @apply opacity-0 transition-opacity duration-200;
+  }
+  
+  .checkmark.checked {
+    @apply opacity-100 animate-check-mark;
+  }
+  
+  .glass-panel {
+    @apply bg-white/80 backdrop-blur-sm border border-white/50 shadow-sm rounded-xl;
+  }
+  
+  /* Futuristic UI styles */
+  .futuristic-panel {
+    @apply bg-white/40 backdrop-blur-md border border-white/30 shadow-lg rounded-xl;
+    @apply transition-all duration-300 hover:shadow-xl hover:bg-white/50;
+  }
+  
+  .futuristic-card {
+    @apply bg-white/70 backdrop-blur-sm rounded-xl p-5 shadow-sm border border-white/50;
+    @apply transition-all duration-300 hover:shadow-md;
+  }
+  
+  .futuristic-input {
+    @apply bg-white/50 backdrop-blur-sm border border-white/30 rounded-lg px-4 py-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all;
+  }
+  
+  .futuristic-button {
+    @apply bg-black text-white rounded-full px-6 py-2 hover:bg-black/90 transition-all;
+    @apply shadow-md hover:shadow-lg;
+  }
+  
+  .futuristic-sidebar {
+    @apply bg-white/20 backdrop-blur-lg border-r border-white/20;
+  }
+  
+  .futuristic-nav-item {
+    @apply rounded-lg px-3 py-2 transition-all duration-200;
+    @apply hover:bg-white/30 hover:shadow-sm;
+  }
+  
+  .futuristic-nav-item.active {
+    @apply bg-black text-white shadow-md;
+  }
+}
+
+@keyframes pulse-pink {
+  0%, 100% {
+    filter: blur(8px) opacity(0.3);
+  }
+  50% {
+    filter: blur(12px) opacity(0.5);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
