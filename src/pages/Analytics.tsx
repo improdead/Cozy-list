@@ -1,17 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TaskProvider } from '@/context/TaskContext';
-import { TaskHeader } from '@/components/TaskHeader';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Layout, LineChart, Calendar, Settings2 } from 'lucide-react';
+import { Layout, LineChart, Calendar, Settings2, AlertCircle } from 'lucide-react';
 import { AnalyticsOverview } from '@/components/analytics/AnalyticsOverview';
 import { AnalyticsCharts } from '@/components/analytics/AnalyticsCharts';
 import { TagDistribution } from '@/components/analytics/TagDistribution';
 import { PriorityDistribution } from '@/components/analytics/PriorityDistribution';
 import { ProductivityInsights } from '@/components/analytics/ProductivityInsights';
+import { TimeBasedAnalysis } from '@/components/analytics/TimeBasedAnalysis';
+import { supabase, getSubscriptionStatus } from '@/lib/supabase';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Analytics = () => {
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isPremium, setIsPremium] = useState(false);
+  
+  useEffect(() => {
+    const checkSubscription = async () => {
+      try {
+        setLoading(true);
+        const { data: subscription } = await getSubscriptionStatus();
+        setIsPremium(subscription?.status === 'active');
+      } catch (err) {
+        console.error('Error checking subscription:', err);
+        setError('Failed to load subscription status');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkSubscription();
+  }, []);
   
   return (
     <TaskProvider>
@@ -82,17 +105,40 @@ const Analytics = () => {
                 <p className="text-muted-foreground text-sm">Track your productivity and task completion metrics</p>
               </div>
               
-              <div className="space-y-8">
-                <AnalyticsOverview />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <AnalyticsCharts />
+              {error && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              
+              {loading ? (
+                <div className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <Skeleton key={i} className="h-24 w-full rounded-lg" />
+                    ))}
+                  </div>
+                  <Skeleton className="h-64 w-full rounded-lg" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Skeleton className="h-48 w-full rounded-lg" />
+                    <Skeleton className="h-48 w-full rounded-lg" />
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <TagDistribution />
-                  <PriorityDistribution />
+              ) : (
+                <div className="space-y-8">
+                  <AnalyticsOverview />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <AnalyticsCharts />
+                  </div>
+                  <TimeBasedAnalysis />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <TagDistribution />
+                    <PriorityDistribution />
+                  </div>
+                  <ProductivityInsights />
                 </div>
-                <ProductivityInsights />
-              </div>
+              )}
             </div>
           </div>
         </div>

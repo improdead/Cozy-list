@@ -10,6 +10,7 @@ interface TaskContextProps {
   viewMode: TaskViewMode;
   sortOption: TaskSortOption;
   filterOption: TaskFilterOption;
+  searchQuery: string;
   addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateTask: (taskId: string, taskData: Partial<Task>) => void;
   deleteTask: (taskId: string) => void;
@@ -17,6 +18,7 @@ interface TaskContextProps {
   setViewMode: (mode: TaskViewMode) => void;
   setSortOption: (option: TaskSortOption) => void;
   setFilterOption: (option: TaskFilterOption) => void;
+  setSearchQuery: (query: string) => void;
   filteredAndSortedTasks: Task[];
   availableTags: TaskTag[];
 }
@@ -26,6 +28,7 @@ const TaskContext = createContext<TaskContextProps | undefined>(undefined);
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { toast } = useToast();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -160,6 +163,16 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const filteredAndSortedTasks = React.useMemo(() => {
     let filteredTasks = [...tasks];
     
+    // Apply search query filter
+    if (searchQuery.trim() !== '') {
+      const query = searchQuery.toLowerCase().trim();
+      filteredTasks = filteredTasks.filter((task) => 
+        task.title.toLowerCase().includes(query) || 
+        (task.description && task.description.toLowerCase().includes(query)) ||
+        task.tags.some(tag => tag.toLowerCase().includes(query))
+      );
+    }
+    
     // Apply filters
     if (filterOption === 'completed') {
       filteredTasks = filteredTasks.filter((task) => task.status === 'completed');
@@ -189,7 +202,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       return 0;
     });
-  }, [tasks, filterOption, sortOption]);
+  }, [tasks, filterOption, sortOption, searchQuery]);
 
   return (
     <TaskContext.Provider
@@ -198,6 +211,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         viewMode,
         sortOption,
         filterOption,
+        searchQuery,
         addTask,
         updateTask,
         deleteTask,
@@ -205,6 +219,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setViewMode,
         setSortOption,
         setFilterOption,
+        setSearchQuery,
         filteredAndSortedTasks,
         availableTags,
       }}

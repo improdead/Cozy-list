@@ -8,6 +8,7 @@ import { Plus, Search } from 'lucide-react';
 
 export const TaskHeader: React.FC = () => {
   const [open, setOpen] = React.useState(false);
+  const { searchQuery, setSearchQuery } = useTaskContext();
   
   return (
     <div className="flex flex-col space-y-6">
@@ -35,7 +36,9 @@ export const TaskHeader: React.FC = () => {
         <input 
           type="text" 
           placeholder="Search tasks..." 
-          className="futuristic-input w-full pl-10 pr-4 py-2" 
+          className="futuristic-input w-full pl-10 pr-4 py-2"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
     </div>

@@ -1,18 +1,247 @@
-import React from 'react';
-import { Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Sparkles, Check, X, Calendar, RefreshCw } from 'lucide-react';
+import { useTaskContext } from '@/context/TaskContext';
+import { generateTaskSuggestions, TaskSuggestion } from '@/lib/gemini';
+import { getSubscriptionStatus, supabase } from '@/lib/supabase';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+
 export const TaskSuggestions: React.FC = () => {
-  // In a real app, these would come from an AI-based system
-  const suggestions = [{
-    id: 1,
-    title: "Unlock Premium Features",
-    description: "Upgrade to access AI-powered task suggestions, automatic task breakdown, insights, and more.",
-    isPremium: true
-  }];
-  return <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Sparkles className="h-5 w-5 text-purple-500" />
-        <h2 className="text-lg font-patrick">AI Suggestions</h2>
+  const { tasks, addTask } = useTaskContext();
+  const { toast } = useToast();
+  const [suggestions, setSuggestions] = useState<TaskSuggestion[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+  const [routineData, setRoutineData] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Function to fetch suggestions and routines
+  const fetchSuggestionsAndRoutines = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Check if user has premium subscription
+      const { data: subscription } = await getSubscriptionStatus();
+      const hasPremium = subscription?.is_paid_user === true || subscription?.status === 'active';
+      setIsPremium(hasPremium);
+      
+      // Only fetch AI suggestions if user has premium
+      if (hasPremium) {
+        // Get user ID for fetching routines
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          // Fetch user's routines from Supabase
+          const { data: routines, error } = await supabase
+            .from('routines')
+            .select('*')
+            .eq('user_id', user.id);
+          
+          if (!error && routines) {
+            setRoutineData(routines);
+            
+            // Generate AI suggestions based on tasks and routines
+            const aiSuggestions = await generateTaskSuggestions(tasks, routines);
+            setSuggestions(aiSuggestions);
+          } else if (error) {
+            console.error('Error fetching routines:', error);
+            // Still try to generate suggestions without routines
+            const aiSuggestions = await generateTaskSuggestions(tasks, []);
+            setSuggestions(aiSuggestions);
+          }
+        } else {
+          // Generate AI suggestions with just tasks if no user is found
+          const aiSuggestions = await generateTaskSuggestions(tasks, []);
+          setSuggestions(aiSuggestions);
+        }
+      } else {
+        // Clear suggestions for non-premium users
+        setSuggestions([]);
+      }
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+      setError('Failed to generate suggestions. Please try again.');
+      // Don't clear existing suggestions on error
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Fetch suggestions when tasks change
+  useEffect(() => {
+    fetchSuggestionsAndRoutines();
+  }, [tasks]); // Remove routineData from dependencies to prevent infinite loop
+  
+  // Handle accepting a suggestion
+  const handleAccept = (suggestion: TaskSuggestion) => {
+    addTask({
+      title: suggestion.title,
+      description: suggestion.description,
+      status: 'pending',
+      dueDate: suggestion.dueDate,
+      priority: suggestion.priority,
+      tags: suggestion.tags
+    });
+    
+    // Remove the suggestion after accepting
+    setSuggestions(prev => prev.filter(s => s.id !== suggestion.id));
+    
+    toast({
+      title: "Task Added",
+      description: "AI suggestion added to your tasks"
+    });
+  };
+  
+  // Handle dismissing a suggestion
+  const handleDismiss = (suggestionId: string) => {
+    setSuggestions(prev => prev.filter(s => s.id !== suggestionId));
+  };
+  
+  // Handle refreshing suggestions
+  const handleRefresh = () => {
+    fetchSuggestionsAndRoutines();
+  };
+  
+  // Format date for display
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date);
+  };
+  
+  // If loading, show a loading state
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-purple-500" />
+            <h2 className="text-lg font-patrick">AI Suggestions</h2>
+          </div>
+        </div>
+        <div className="p-6 flex justify-center items-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        </div>
       </div>
+    );
+  }
+
+  // If we have suggestions, show them
+  if (suggestions.length > 0) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-purple-500" />
+            <h2 className="text-lg font-patrick">AI Suggestions</h2>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleRefresh} 
+            disabled={loading}
+            className="flex items-center gap-1"
+          >
+            <RefreshCw className="h-3 w-3" />
+            Refresh
+          </Button>
+        </div>
+        
+        {error && (
+          <div className="bg-red-50 text-red-700 p-3 rounded-md mb-4">
+            {error}
+          </div>
+        )}
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {suggestions.map((suggestion) => (
+            <div key={suggestion.id} className="bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="bg-purple-100 p-1 rounded-full">
+                  <Sparkles className="h-4 w-4 text-purple-600" />
+                </div>
+                <h3 className="font-medium">{suggestion.title}</h3>
+              </div>
+              
+              <p className="text-sm text-muted-foreground mb-3">{suggestion.description}</p>
+              
+              <div className="flex items-center gap-2 mb-3">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm">{formatDate(suggestion.dueDate)}</span>
+                
+                <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${suggestion.priority === 'high' ? 'bg-red-100 text-red-700' : suggestion.priority === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
+                  {suggestion.priority.charAt(0).toUpperCase() + suggestion.priority.slice(1)}
+                </span>
+              </div>
+              
+              <div className="flex flex-wrap gap-2 mb-3">
+                {suggestion.tags.map((tag, index) => {
+                  const tagColor = tag.toLowerCase() === 'work' ? 'bg-blue-50 text-blue-700' : 
+                                  tag.toLowerCase() === 'health' ? 'bg-lime-50 text-lime-700' : 
+                                  'bg-secondary text-secondary-foreground';
+                  return (
+                    <span key={index} className={`text-xs px-2 py-1 rounded-full ${tagColor}`}>{tag}</span>
+                  );
+                })}
+              </div>
+              
+              <div className="flex justify-between items-center mt-2">
+                <button 
+                  onClick={() => handleDismiss(suggestion.id)}
+                  className="text-xs text-gray-500 hover:text-gray-700"
+                  aria-label="Dismiss"
+                >
+                  Dismiss
+                </button>
+                <button 
+                  onClick={() => handleAccept(suggestion)}
+                  className="text-xs bg-purple-600 text-white px-4 py-1 rounded-md hover:bg-purple-700"
+                  aria-label="Accept"
+                >
+                  Accept
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-center">
+          <button 
+            onClick={() => setSuggestions([])} 
+            className="text-sm text-purple-600 hover:text-purple-800 underline"
+          >
+            Show premium features
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If no suggestions or not premium, show premium features
+  return <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-purple-500" />
+          <h2 className="text-lg font-patrick">AI Suggestions</h2>
+        </div>
+        {isPremium && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleRefresh} 
+            disabled={loading}
+            className="flex items-center gap-1"
+          >
+            <RefreshCw className="h-3 w-3" />
+            Generate Suggestions
+          </Button>
+        )}
+      </div>
+      
+      {error && isPremium && (
+        <div className="bg-red-50 text-red-700 p-3 rounded-md mb-4">
+          {error}
+        </div>
+      )}
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
@@ -21,7 +250,7 @@ export const TaskSuggestions: React.FC = () => {
           </div>
           <h3 className="font-medium mb-1">AI-Powered Task Suggestions</h3>
           <p className="text-sm text-muted-foreground mb-3">
-            Get personalized task suggestions based on your habits and behavior patterns.
+            Get personalized task suggestions based on your habits and daily routines.
           </p>
           <span className="inline-block text-xs text-purple-600 font-medium">Premium Feature</span>
         </div>

@@ -1,24 +1,44 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTaskContext } from '@/context/TaskContext';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { startOfWeek, addDays, format } from 'date-fns';
+import { startOfWeek, addDays, format, subMonths, startOfMonth, endOfMonth, isSameMonth, isWithinInterval } from 'date-fns';
 
 export const AnalyticsCharts: React.FC = () => {
   const { tasks } = useTaskContext();
   
-  // Generate completion trend data (mock data for now)
-  const trendData = [
-    { name: 'Jan', completed: 5, pending: 3 },
-    { name: 'Feb', completed: 4, pending: 6 },
-    { name: 'Mar', completed: 7, pending: 4 },
-    { name: 'Apr', completed: 5, pending: 5 },
-    { name: 'May', completed: 8, pending: 3 },
-    { name: 'Jun', completed: 6, pending: 4 }
-  ];
+  // Generate monthly completion trend data based on real task data
+  const trendData = useMemo(() => {
+    const today = new Date();
+    const monthsToShow = 6;
+    
+    return Array.from({ length: monthsToShow }).map((_, index) => {
+      const monthDate = subMonths(today, monthsToShow - 1 - index);
+      const monthStart = startOfMonth(monthDate);
+      const monthEnd = endOfMonth(monthDate);
+      const monthName = format(monthDate, 'MMM');
+      
+      const completedInMonth = tasks.filter(task => 
+        task.status === 'completed' && 
+        task.updatedAt && 
+        isWithinInterval(task.updatedAt, { start: monthStart, end: monthEnd })
+      ).length;
+      
+      const createdInMonth = tasks.filter(task => 
+        task.createdAt && 
+        isWithinInterval(task.createdAt, { start: monthStart, end: monthEnd })
+      ).length;
+      
+      return {
+        name: monthName,
+        completed: completedInMonth,
+        created: createdInMonth
+      };
+    });
+  }, [tasks]);
   
   // Generate weekly data
-  const generateWeeklyData = () => {
+  const weeklyData = useMemo(() => {
     const today = new Date();
     const startDay = startOfWeek(today);
     
@@ -28,12 +48,14 @@ export const AnalyticsCharts: React.FC = () => {
       
       const completedToday = tasks.filter(task => 
         task.status === 'completed' && 
+        task.updatedAt && 
         task.updatedAt.getDate() === day.getDate() && 
         task.updatedAt.getMonth() === day.getMonth() && 
         task.updatedAt.getFullYear() === day.getFullYear()
       ).length;
       
       const createdToday = tasks.filter(task => 
+        task.createdAt && 
         task.createdAt.getDate() === day.getDate() && 
         task.createdAt.getMonth() === day.getMonth() && 
         task.createdAt.getFullYear() === day.getFullYear()
@@ -45,9 +67,7 @@ export const AnalyticsCharts: React.FC = () => {
         created: createdToday
       };
     });
-  };
-  
-  const weeklyData = generateWeeklyData();
+  }, [tasks]);
   
   return (
     <>
@@ -63,7 +83,7 @@ export const AnalyticsCharts: React.FC = () => {
                 <stop offset="5%" stopColor="#6E59A5" stopOpacity={0.8}/>
                 <stop offset="95%" stopColor="#6E59A5" stopOpacity={0}/>
               </linearGradient>
-              <linearGradient id="colorPending" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorCreated" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#F97316" stopOpacity={0.8}/>
                 <stop offset="95%" stopColor="#F97316" stopOpacity={0}/>
               </linearGradient>
@@ -83,10 +103,10 @@ export const AnalyticsCharts: React.FC = () => {
             />
             <Area 
               type="monotone" 
-              dataKey="pending" 
+              dataKey="created" 
               stroke="#F97316" 
               fillOpacity={1} 
-              fill="url(#colorPending)" 
+              fill="url(#colorCreated)" 
               name="Created"
             />
           </AreaChart>
