@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       external: [
+        '@stripe/stripe-js',
         // Add any other external dependencies here
       ],
     },
