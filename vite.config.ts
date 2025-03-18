@@ -20,16 +20,17 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     rollupOptions: {
-      external: [
-        '@stripe/stripe-js',
-        'stripe',
-        // Add any other external dependencies here
-      ],
+      output: {
+        // Properly handle external modules
+        globals: {
+          '@stripe/stripe-js': 'Stripe',
+          'stripe': 'stripe'
+        }
+      }
     },
   },
   optimizeDeps: {
-    include: ['@stripe/stripe-js'],
-    exclude: ['stripe']
+    include: ['@stripe/stripe-js']
   }
 }));
 
