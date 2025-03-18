@@ -22,12 +22,14 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       external: [
         '@stripe/stripe-js',
+        'stripe',
         // Add any other external dependencies here
       ],
     },
   },
   optimizeDeps: {
-    include: ['@stripe/stripe-js']
+    include: ['@stripe/stripe-js'],
+    exclude: ['stripe']
   }
 }));
 
