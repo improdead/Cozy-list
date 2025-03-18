@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { Task } from '@/types/task';
-import { Check, Calendar, Clock, Tag, Edit, Trash, ChevronDown } from 'lucide-react';
+import { Check, Calendar, Clock, Tag, Edit, Trash, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTaskContext } from '@/context/TaskContext';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,9 @@ interface TaskCardProps {
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const { toggleTaskStatus, deleteTask } = useTaskContext();
-  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
-  
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
+
   const handleToggleStatus = () => {
     toggleTaskStatus(task.id);
   };
@@ -28,6 +29,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     } else {
       setShowDeleteConfirm(true);
     }
+  };
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
   };
 
   const getPriorityColor = () => {
@@ -91,10 +96,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             </h3>
             
             {task.description && (
-              <p 
+              <p
                 className={cn(
-                  'text-sm text-muted-foreground mt-1 truncate',
-                  task.status === 'completed' ? 'line-through' : ''
+                  'text-sm text-muted-foreground mt-1 transition-all duration-200',
+                  task.status === 'completed' ? 'line-through' : '',
+                  !showFullDescription && task.description.length > 60 ? 'truncate' : '',
+                  showFullDescription ? 'max-h-40' : 'max-h-6'
                 )}
               >
                 {task.description}
@@ -163,8 +170,17 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       
       {task.description && task.description.length > 60 && (
         <div className="px-4 pb-2 flex justify-center">
-          <Button variant="ghost" size="sm" className="text-xs text-muted-foreground">
-            Show more <ChevronDown className="h-3 w-3 ml-1" />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs text-muted-foreground"
+            onClick={toggleDescription}
+          >
+            {showFullDescription ? (
+              <>Show less <ChevronUp className="h-3 w-3 ml-1" /></>
+            ) : (
+              <>Show more <ChevronDown className="h-3 w-3 ml-1" /></>
+            )}
           </Button>
         </div>
       )}

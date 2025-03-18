@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Brain, Sparkles, BarChart3, MessageSquare, Check } from 'lucide-react';
+import { Brain, Sparkles, BarChart3, MessageSquare, Check, Zap, Shield, Clock, Users, Star, PlusCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { motion } from 'framer-motion';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -73,45 +76,93 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-          <div className="flex-1 text-center lg:text-left">
-            <div className="inline-block px-4 py-2 bg-purple-100 rounded-full text-purple-600 font-medium mb-4">
-              Introducing Cozy Task
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex-1 text-center lg:text-left"
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="inline-block px-4 py-2 bg-purple-100 rounded-full text-purple-600 font-medium mb-4"
+            >
+              <span className="flex items-center gap-1">
+                <Sparkles className="h-4 w-4" />
+                Introducing Cozy Task
+              </span>
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-4xl md:text-6xl font-bold mb-6"
+            >
               Conquer Procrastination with AI-Powered Task Management
-            </h1>
-            <p className="text-lg text-gray-600 mb-8">
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="text-lg text-gray-600 mb-8"
+            >
               Cozy Task analyzes your habits and generates personalized, actionable tasks to help you stay productive and focused.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            </motion.p>
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+            >
               <Button size="lg" className="w-full sm:w-auto" onClick={handleGetStarted}>
                 {isAuthenticated ? 'Go to Dashboard' : 'Get Started Free'}
               </Button>
               <Button size="lg" variant="outline" className="w-full sm:w-auto">Watch Demo</Button>
-            </div>
-          </div>
-          <div className="flex-1">
-            <img 
+            </motion.div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="flex-1"
+          >
+            <motion.img 
+              whileHover={{ scale: 1.03, rotate: -1 }}
+              transition={{ type: "spring", stiffness: 300 }}
               src="/lovable-uploads/output_image.png"
               alt="Dashboard Preview" 
               className="w-full max-w-2xl mx-auto drop-shadow-2xl rounded-2xl"
             />
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-white/50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-3xl font-bold mb-4">Supercharge Your Productivity</h2>
             <p className="text-gray-600">
               Cozy Task combines cutting-edge artificial intelligence with proven productivity techniques to help you accomplish more.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-            <div className="p-6 bg-white rounded-xl shadow-sm">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+              className="p-6 bg-white rounded-xl shadow-sm"
+            >
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                 <BarChart3 className="w-6 h-6 text-purple-600" />
               </div>
@@ -119,9 +170,16 @@ const Landing = () => {
               <p className="text-gray-600">
                 Receive insights about your productivity patterns and optimal work times.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="p-6 bg-white rounded-xl shadow-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+              className="p-6 bg-white rounded-xl shadow-sm"
+            >
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                 <MessageSquare className="w-6 h-6 text-purple-600" />
               </div>
@@ -129,7 +187,41 @@ const Landing = () => {
               <p className="text-gray-600">
                 Chat with an AI assistant that helps you manage your tasks more effectively.
               </p>
-            </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+              className="p-6 bg-white rounded-xl shadow-sm"
+            >
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Smart Task Breakdown</h3>
+              <p className="text-gray-600">
+                Automatically break down complex tasks into manageable steps with AI assistance.
+              </p>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+              className="p-6 bg-white rounded-xl shadow-sm"
+            >
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                <Clock className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Time Optimization</h3>
+              <p className="text-gray-600">
+                Schedule tasks during your most productive hours based on your personal patterns.
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -316,7 +408,7 @@ const Landing = () => {
                   <span>AI assistant chatbot</span>
                 </li>
               </ul>
-              <Link to="/signup">
+              <Link to="/payment-plans">
                 <Button className="w-full bg-purple-600 hover:bg-purple-700">Upgrade Now</Button>
               </Link>
             </div>
@@ -363,68 +455,88 @@ const Landing = () => {
         </div>
       </section>
 
+
+
       {/* Testimonials Section */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
             <div className="inline-block px-4 py-2 bg-yellow-100 rounded-full text-yellow-600 font-medium mb-4">
-              Testimonials
+              <span className="flex items-center gap-1">
+                <Star className="h-4 w-4" />
+                Testimonials
+              </span>
             </div>
-            <h2 className="text-3xl font-bold mb-4">What Our Users Say</h2>
+            <h2 className="text-3xl font-bold mb-4">What People Say</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Join thousands of professionals who have transformed their productivity with Cozy Task.
+              See what people are saying about Cozy Task's productivity features.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Testimonial 1 */}
-            <div className="bg-white p-6 rounded-xl shadow-sm">
-              <div className="flex mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <svg key={star} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              <p className="text-gray-700 italic mb-6">
-                "As someone who struggles with procrastination, this app has been a game-changer. Breaking tasks down automatically makes everything feel more manageable."
-              </p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-blue-600 font-semibold">MC</span>
+            {[
+              {
+                stars: 5,
+                text: "As someone who struggles with procrastination, this app has been a game-changer. Breaking tasks down automatically makes everything feel more manageable.",
+                name: "Michael Chen",
+                role: "Software Developer",
+                initials: "MC",
+                bgColor: "blue"
+              },
+              {
+                stars: 5,
+                text: "The AI assistant is like having a personal productivity coach. It helps me stay on track and suggests better ways to organize my tasks.",
+                name: "Sarah Johnson",
+                role: "Project Manager",
+                initials: "SJ",
+                bgColor: "green"
+              },
+              {
+                stars: 4,
+                text: "The habit insights have helped me identify when I'm most productive. I've restructured my day based on these insights and seen a 30% increase in output.",
+                name: "Emily Rodriguez",
+                role: "Marketing Director",
+                initials: "ER",
+                bgColor: "pink"
+              }
+            ].map((testimonial, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+                className="bg-white p-6 rounded-xl shadow-sm"
+              >
+                <div className="flex mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star 
+                      key={i} 
+                      className={`w-5 h-5 ${i < testimonial.stars ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                    />
+                  ))}
                 </div>
-                <div>
-                  <h4 className="font-semibold">Michael Chen</h4>
-                  <p className="text-sm text-gray-500">Software Developer</p>
+                <p className="text-gray-700 italic mb-6">
+                  "{testimonial.text}"
+                </p>
+                <div className="flex items-center">
+                  <div className={`w-10 h-10 bg-${testimonial.bgColor}-100 rounded-full flex items-center justify-center mr-3`}>
+                    <span className={`text-${testimonial.bgColor}-600 font-semibold`}>{testimonial.initials}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">{testimonial.name}</h4>
+                    <p className="text-sm text-gray-500">{testimonial.role}</p>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Testimonial 3 */}
-            <div className="bg-white p-6 rounded-xl shadow-sm">
-              <div className="flex mb-4">
-                {[1, 2, 3, 4].map((star) => (
-                  <svg key={star} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-                <svg className="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              </div>
-              <p className="text-gray-700 italic mb-6">
-                "The habit insights have helped me identify when I'm most productive. I've restructured my day based on these insights and seen a 30% increase in output."
-              </p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-pink-600 font-semibold">ER</span>
-                </div>
-                <div>
-                  <h4 className="font-semibold">Emily Rodriguez</h4>
-                  <p className="text-sm text-gray-500">Marketing Director</p>
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -451,80 +563,211 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-white/50 py-12 px-4">
+
+
+
+
+      {/* How It Works Section */}
+      <section className="py-20 px-4 bg-white/50">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="font-semibold mb-4">Product</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Features</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Pricing</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Integrations</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Changelog</a></li>
-              </ul>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block px-4 py-2 bg-indigo-100 rounded-full text-indigo-600 font-medium mb-4">
+              <span className="flex items-center gap-1">
+                <Zap className="h-4 w-4" />
+                How It Works
+              </span>
             </div>
-            <div>
-              <h3 className="font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Blog</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Documentation</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Guides</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Help Center</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">About Us</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Careers</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Contact</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Press</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">Cookie Policy</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-purple-600">GDPR</a></li>
-              </ul>
-            </div>
+            <h2 className="text-3xl font-bold mb-4">Simple Steps to Productivity</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Getting started with Cozy Task is easy. Follow these simple steps to transform your productivity.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-12 relative">
+            {/* Connecting Line */}
+            <div className="hidden md:block absolute top-1/4 left-0 right-0 h-1 bg-gradient-to-r from-purple-200 via-blue-200 to-green-200 z-0" />
+
+            {[
+              {
+                step: 1,
+                title: "Sign Up & Set Goals",
+                description: "Create your account and tell us about your productivity goals and challenges.",
+                icon: PlusCircle,
+                color: "purple"
+              },
+              {
+                step: 2,
+                title: "AI Analysis",
+                description: "Our AI analyzes your habits and creates a personalized productivity plan.",
+                icon: Brain,
+                color: "blue"
+              },
+              {
+                step: 3,
+                title: "Track & Improve",
+                description: "Complete tasks, get insights, and watch your productivity soar.",
+                icon: BarChart3,
+                color: "green"
+              }
+            ].map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 * index }}
+                className="relative z-10 flex flex-col items-center"
+              >
+                <motion.div 
+                  initial={{ scale: 0.8 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 200, 
+                    delay: 0.3 + (0.2 * index),
+                    duration: 0.8 
+                  }}
+                  className={`w-16 h-16 bg-${step.color}-100 rounded-full flex items-center justify-center mb-6`}
+                >
+                  <div className="relative">
+                    {React.createElement(step.icon, { className: `w-8 h-8 text-${step.color}-600` })}
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-${step.color}-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                      {step.step}
+                    </div>
+                  </div>
+                </motion.div>
+                <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+                <p className="text-gray-600 text-center">{step.description}</p>
+              </motion.div>
+            ))}
           </div>
-          <div className="pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <img 
-                src="/lovable-uploads/d8bfce19-2f0d-46f6-9fbe-924f64b656e2.png" 
-                alt="Cozy Task Logo" 
-                className="w-8 h-8 object-contain"
-              />
-              <span className="text-xl font-patrick text-primary">Cozy Task</span>
-            </div>
-            <p className="text-gray-600">&copy; {new Date().getFullYear()} Cozy Task. All rights reserved.</p>
-          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mt-16 text-center"
+          >
+            <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 text-white" onClick={handleGetStarted}>
+              Get Started in Minutes
+            </Button>
+          </motion.div>
         </div>
-      </footer>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-[#f0f4f8] to-[#e6e9f0]">
+        <div className="max-w-4xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block px-4 py-2 bg-orange-100 rounded-full text-orange-600 font-medium mb-4">
+              <span className="flex items-center gap-1">
+                <MessageSquare className="h-4 w-4" />
+                FAQ
+              </span>
+            </div>
+            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Everything you need to know about Cozy Task and how it can help you be more productive.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="space-y-4"
+          >
+            <Accordion type="single" collapsible className="w-full">
+              {[
+                {
+                  question: "How does Cozy Task use AI to improve productivity?",
+                  answer: "Cozy Task analyzes your work patterns, task completion history, and productivity cycles to identify when you're most effective. It then suggests optimal times for different types of tasks, breaks down complex projects into manageable steps, and provides personalized productivity insights."
+                },
+                {
+                  question: "Is my data secure with Cozy Task?",
+                  answer: "Absolutely. We take data security seriously. All your data is encrypted both in transit and at rest. We never share your personal information with third parties, and our AI processing follows strict privacy guidelines. You can also export or delete your data at any time."
+                },
+                {
+                  question: "Can I use Cozy Task with my existing tools?",
+                  answer: "Yes! Cozy Task integrates seamlessly with popular productivity tools like Google Calendar, Microsoft Outlook, Slack, and more. You can sync your existing tasks and calendars to get a unified view of your productivity landscape."
+                },
+                {
+                  question: "What makes Cozy Task different from other task managers?",
+                  answer: "Unlike traditional task managers that just list your to-dos, Cozy Task actively helps you work better. Our AI assistant learns your habits, suggests better ways to organize your day, breaks down complex tasks, and adapts to your unique productivity style over time."
+                },
+                {
+                  question: "Do I need to pay for Cozy Task?",
+                  answer: "Cozy Task offers a generous free tier that includes basic task management features. For advanced AI capabilities, analytics, and team features, we offer affordable Premium and Teams plans with monthly or annual billing options."
+                }
+              ].map((faq, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: 0.1 * index }}
+                >
+                  <AccordionItem value={`item-${index}`} className="border border-gray-200 rounded-lg mb-4 overflow-hidden">
+                    <AccordionTrigger className="px-6 py-4 hover:bg-gray-50 transition-all">
+                      <span className="text-left font-medium">{faq.question}</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-4 pt-2">
+                      <p className="text-gray-600">{faq.answer}</p>
+                    </AccordionContent>
+                  </AccordionItem>
+                </motion.div>
+              ))}
+            </Accordion>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Call to Action Section */}
       <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col lg:flex-row items-center justify-between gap-8"
+          >
             <div className="lg:max-w-xl">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Boost Your Productivity?</h2>
               <p className="text-lg text-purple-100 mb-6">
-                Join thousands of users who have transformed their workflow with Cozy Task. Start your free trial today.
+                Transform your workflow with Cozy Task. Start your free trial today.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-col sm:flex-row gap-4"
+            >
               <Link to="/signup">
                 <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100">Get Started Free</Button>
               </Link>
               <Link to="/login">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">Learn More</Button>
               </Link>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </div>

@@ -293,7 +293,10 @@ export const TaskSuggestions: React.FC = () => {
             Unlock all premium features for just $4.99/month or $49.99/year and supercharge your productivity with AI.
           </p>
         </div>
-        <button className="mt-4 md:mt-0 py-2 bg-white text-purple-600 rounded-md font-medium hover:bg-purple-50 transition-colors px-[9px]">
+        <button 
+          onClick={() => window.location.href = '/payment-plans'} 
+          className="mt-4 md:mt-0 py-2 bg-white text-purple-600 rounded-md font-medium hover:bg-purple-50 transition-colors px-[9px]"
+        >
           Upgrade Now
         </button>
       </div>

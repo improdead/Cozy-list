@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getSubscriptionStatus } from '@/lib/supabase';
-import { createCheckoutSession, createCustomerPortalSession } from '@/lib/stripe';
+import { createCheckoutSession, createCustomerPortalSession, getStripe } from '@/lib/stripe';
 
 interface SubscriptionManagerProps {
   onSubscriptionChange?: () => void;
@@ -80,9 +80,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ onSubscriptio
       const { sessionId } = await createCheckoutSession(priceId);
       
       // Redirect to Stripe Checkout
-      const stripe = await (await import('@stripe/stripe-js')).loadStripe(
-        import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
-      );
+      const stripe = await getStripe();
       
       if (!stripe) {
         throw new Error('Failed to load Stripe');
@@ -202,13 +200,13 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ onSubscriptio
         ) : (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
                 <h3 className="font-medium mb-1">Monthly Plan</h3>
                 <div className="text-2xl font-bold mb-2">$4.99<span className="text-sm font-normal text-muted-foreground">/month</span></div>
                 <p className="text-sm text-muted-foreground mb-3">
                   Billed monthly, cancel anytime.
                 </p>
-                <ul className="space-y-2 mb-4">
+                <ul className="space-y-2 mb-4 flex-grow">
                   <li className="flex items-center gap-2 text-sm">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                     AI-Powered Task Suggestions
@@ -221,17 +219,21 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ onSubscriptio
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                     Habit-Based Insights
                   </li>
+                  <li className="flex items-center gap-2 text-sm opacity-50">
+                    <CheckCircle2 className="h-4 w-4 text-gray-400" />
+                    Priority Support
+                  </li>
                 </ul>
                 <Button 
-                  onClick={() => handleSubscribe('monthly')}
+                  onClick={() => navigate('/payment-plans')}
                   disabled={loading}
-                  className="w-full"
+                  className="w-full mt-auto"
                 >
-                  {loading ? 'Processing...' : 'Subscribe Monthly'}
+                  {loading ? 'Processing...' : 'Choose Plan'}
                 </Button>
               </div>
               
-              <div className="bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+              <div className="bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow relative overflow-hidden h-full flex flex-col">
                 <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs px-2 py-1 rounded-bl-md">
                   Save 17%
                 </div>
@@ -240,7 +242,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ onSubscriptio
                 <p className="text-sm text-muted-foreground mb-3">
                   Billed annually, cancel anytime.
                 </p>
-                <ul className="space-y-2 mb-4">
+                <ul className="space-y-2 mb-4 flex-grow">
                   <li className="flex items-center gap-2 text-sm">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                     AI-Powered Task Suggestions
@@ -259,11 +261,11 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ onSubscriptio
                   </li>
                 </ul>
                 <Button 
-                  onClick={() => handleSubscribe('yearly')}
+                  onClick={() => navigate('/payment-plans')}
                   disabled={loading}
-                  className="w-full bg-purple-600 hover:bg-purple-700"
+                  className="w-full bg-purple-600 hover:bg-purple-700 mt-auto"
                 >
-                  {loading ? 'Processing...' : 'Subscribe Yearly'}
+                  {loading ? 'Processing...' : 'Choose Plan'}
                 </Button>
               </div>
             </div>
